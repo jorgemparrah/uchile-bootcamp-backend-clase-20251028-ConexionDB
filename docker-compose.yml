@@ -1,0 +1,18 @@
+services:
+  mysql-server:
+    image: mysql:8.4.6
+    ports:
+      - 3306:${BD_PORT}
+    environment:
+      - MYSQL_ROOT_PASSWORD=${BD_ROOT_PASS}
+      - MYSQL_USER=${BD_USER}
+      - MYSQL_PASSWORD=${BD_PASS}
+      - MYSQL_DATABASE=${BD_NAME}
+    volumes:
+      - ./db/respaldo_datos:/var/lib/mysql
+
+  flyway:
+    image: flyway/flyway:10.20.1-alpine
+    volumes:
+      - ./db/sql:/flyway/sql
+    command: -url=jdbc:mysql://${BD_HOST}:${BD_PORT}/${BD_NAME}?allowPublicKeyRetrieval=true -user=${BD_USER} -password=${BD_PASS} -connectRetries=10 migrate

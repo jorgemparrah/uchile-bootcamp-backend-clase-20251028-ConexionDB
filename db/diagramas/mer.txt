@@ -1,0 +1,50 @@
+Table AUTOPISTA {
+  id VARCHAR(20) [primary key]
+  nombre VARCHAR(50) [not null]
+  longitud_km DECIMAL
+}
+
+Table AUTOPISTA_CIUDAD {
+  id_autopista VARCHAR(20) [primary key, not null, ref: > AUTOPISTA.id ]
+  id_ciudad VARCHAR(20) [primary key, not null, ref: > CIUDAD.id ]
+}
+
+Table CIUDAD {
+  id VARCHAR(20) [primary key]
+  nombre VARCHAR(50)
+  poblacion INTEGER
+}
+
+Table PEAJE {
+  id INT [primary key]
+  id_autopista VARCHAR(20) [ref: > AUTOPISTA.id, not null]
+  tarifa INTEGER
+}
+
+Table CONDUCTOR {
+  rut VARCHAR(12) [primary key]
+  nombre VARCHAR(100) [not null]
+  apellido VARCHAR(100) [not null]
+}
+
+Table LICENCIA {
+  id VARCHAR(100) [primary key]
+  rut_conductor VARCHAR(12) [not null, ref: > CONDUCTOR.rut]
+  fecha_vencimiento DATE [not null]
+}
+
+Table VEHICULO {
+  patente VARCHAR(6) [primary key]
+  modelo VARCHAR(6)
+  fabricacion YEAR
+  rut_conductor VARCHAR(12) [ref: > CONDUCTOR.rut ]
+}
+
+Table PASE {
+  id_transaccion VARCHAR(100) [primary key]
+  patente_vehiculo VARCHAR(6) [not null, ref: > VEHICULO.patente ]
+  id_peaje INTEGER [not null, ref: > PEAJE.id ]
+  fecha DATE [not null]
+  hora TIME [not null]
+  tarifa INTEGER
+}

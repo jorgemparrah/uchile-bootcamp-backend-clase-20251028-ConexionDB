@@ -1,0 +1,7 @@
+erDiagram
+    AUTOPISTA }|--|{ CIUDAD : tiene
+    AUTOPISTA ||--|{ PEAJE : tiene
+    CONDUCTOR ||--|{ VEHICULO : conduce
+    PASE }o--|| PEAJE : ocurre_en
+    PASE }o--|| VEHICULO : afecta
+    LICENCIA }|--|| CONDUCTOR : pertenece
