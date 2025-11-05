@@ -1,6 +1,8 @@
-import { Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
 import { AppService } from './app.service';
-import { ApiParam } from '@nestjs/swagger';
+import { ApiBody, ApiParam } from '@nestjs/swagger';
+import { CrearAutopistaDto } from './dto/crear-autopista.dto';
+import { AutopistaDto } from './dto/autopista.dto';
 
 @Controller()
 export class AppController {
@@ -12,7 +14,7 @@ export class AppController {
   }
 
   @Get("autopistas")
-  async getAutopistas(): Promise<any> {
+  async getAutopistas(): Promise<AutopistaDto[]> {
     return await this.appService.getAutopistas();
   }
 
@@ -32,8 +34,9 @@ export class AppController {
   }
 
   @Post("autopista")
-  async crearAutopista(): Promise<any> {
-    return await this.appService.crearAutopista();
+  @ApiBody({ type: CrearAutopistaDto })
+  async crearAutopista(@Body() dto : CrearAutopistaDto): Promise<AutopistaDto> {
+    return await this.appService.crearAutopista(dto);
   }
 
   @Patch("autopista")
@@ -50,6 +53,22 @@ export class AppController {
   @ApiParam({ name: "id" })
   async eliminarAutopista(@Param("id") id): Promise<any> {
     return await this.appService.eliminarAutopista(id);
+  }
+
+  @Get("paginacion")
+  async paginacion(@Query("nroPagina", new ParseIntPipe()) nroPagina: number,  @Query("cantidad", new ParseIntPipe()) cantidad: number): Promise<any> {
+    return await this.appService.paginacion(nroPagina, cantidad);
+  }
+
+  @Post("transaccion/:nuevoId")
+  async transaccion(@Param("nuevoId", new ParseIntPipe()) id: number): Promise<any> {
+    return await this.appService.transaccion(id);
+  }
+
+  @Get("query-builder/autopista/:id")
+  @ApiParam({ name: "id" })
+  async buscarAutopista(@Param("id") id): Promise<any> {
+    return await this.appService.consultaQueryBuilder(id);
   }
 
 }

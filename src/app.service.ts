@@ -4,6 +4,9 @@ import { DataSource, EntityManager, In, LessThanOrEqual, Like, MoreThan, Not, Re
 import { Autopista } from './entities/autopista.entity';
 import { Peaje } from './entities/peaje.entity';
 import { Ciudad } from './entities/ciudad.entity';
+import { CrearAutopistaDto } from './dto/crear-autopista.dto';
+import { AutopistaMapper } from './mappers/autopista.mapper';
+import { AutopistaDto } from './dto/autopista.dto';
 
 @Injectable()
 export class AppService {
@@ -22,11 +25,12 @@ export class AppService {
     return resultado;
   }
 
-  async getAutopistas() : Promise<any> {
+  async getAutopistas() : Promise<AutopistaDto[]> {
     const em : EntityManager = this.dataSource.manager;
     const repository = em.getRepository(Autopista);
-    const datos = await repository.find();
-    return datos;
+    const datos : Autopista[] = await repository.find();
+    const dto = AutopistaMapper.entityToDtoGetList(datos);
+    return dto;
   }
 
   async getPeajes() : Promise<any> {
@@ -68,14 +72,12 @@ export class AppService {
   }
 
 
-  async crearAutopista(): Promise<any> {
-    const entidad = new Autopista();
-    entidad.id = "N50";
-    entidad.nombre = "Autopista de Ejemplo4";
-    entidad.longitudKm = 1000;
+  async crearAutopista(dto : CrearAutopistaDto): Promise<AutopistaDto> {
+    const entidad = AutopistaMapper.dtoCrearToEntity(dto);
     const resultado = await this.autopistaRepository.save(entidad);
     console.log(resultado);
-    return resultado;
+    const dtoSalida = AutopistaMapper.entityToDtoGet(resultado);
+    return dtoSalida;
   }
 
 
@@ -113,4 +115,68 @@ export class AppService {
     console.log(resultado);
     return entidad;
   }
+
+  async paginacion(nroPagina: number, cantidadPorPagina: number): Promise<any> {
+    const datos = await this.autopistaRepository.find({
+      order: {
+        nombre: "DESC",
+        id: "ASC"
+      },
+      skip: (cantidadPorPagina * nroPagina) - cantidadPorPagina,
+      take: cantidadPorPagina
+    });
+    return AutopistaMapper.entityToDtoGetList(datos);
+  }
+
+  async transaccion(id: number): Promise<any> {
+    const c1 : Ciudad | null = await this.dataSource.manager.findOneBy(Ciudad, {
+      id: 'C1'
+    });
+
+    const c2 : Ciudad | null = await this.dataSource.manager.findOneBy(Ciudad, {
+      id: 'C2'
+    });
+
+    const autopistaEntity = new Autopista();
+    autopistaEntity.id = `W${id}`;
+    autopistaEntity.nombre = `Autopista de Ejemplo (${id})`;
+    autopistaEntity.longitudKm = 1000;
+    autopistaEntity.ciudades = [];
+    if (c1) {
+      autopistaEntity.ciudades.push(c1);
+    }
+    if (c2) {
+      autopistaEntity.ciudades.push(c2);
+    }
+
+    const peajeEntity = new Peaje();
+    peajeEntity.id = id;
+    peajeEntity.idAutopista = `W${id}`;
+    peajeEntity.tarifa = id;
+
+    try {
+      await this.dataSource.manager.transaction(async (emVirtual) => {
+        console.log("Creando autopista");
+        await emVirtual.save(autopistaEntity);
+        console.log("Autopista guardado");
+        console.log("Creando peaje");
+        await emVirtual.save(peajeEntity);
+        console.log("Peaje guardado");
+      });
+    } catch (e) {
+      console.log("Excepcion", e);
+      throw e;
+    }
+    return {};
+  }
+
+  async consultaQueryBuilder(id) {
+    const em = this.dataSource.manager;
+    const autopistas: Autopista | null = await em.createQueryBuilder(Autopista, "a")
+      .select()
+      .where("a.id = :id2", { id2: id })
+      .getOne();
+    return autopistas;
+  }
+
 }

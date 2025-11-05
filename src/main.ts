@@ -10,7 +10,6 @@ async function bootstrap() {
     .setTitle('API example')
     .setDescription('Descripcion de la API')
     .setVersion('1.0')
-    .addTag('Ejemplos')
     .build();
   const document = SwaggerModule.createDocument(app, config, {
     include: [ AppModule ]
