@@ -1,0 +1,65 @@
+CREATE TABLE "AUTOPISTA" (
+  "id" VARCHAR(20) PRIMARY KEY,
+  "nombre" VARCHAR(50) NOT NULL,
+  "longitud_km" DECIMAL
+);
+
+CREATE TABLE "AUTOPISTA_CIUDAD" (
+  "id_autopista" VARCHAR(20) NOT NULL,
+  "id_ciudad" VARCHAR(20) NOT NULL,
+  PRIMARY KEY ("id_autopista", "id_ciudad")
+);
+
+CREATE TABLE "CIUDAD" (
+  "id" VARCHAR(20) PRIMARY KEY,
+  "nombre" VARCHAR(50),
+  "poblacion" INTEGER
+);
+
+CREATE TABLE "PEAJE" (
+  "id" INT PRIMARY KEY,
+  "id_autopista" VARCHAR(20) NOT NULL,
+  "tarifa" INTEGER
+);
+
+CREATE TABLE "CONDUCTOR" (
+  "rut" VARCHAR(12) PRIMARY KEY,
+  "nombre" VARCHAR(100) NOT NULL,
+  "apellido" VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE "LICENCIA" (
+  "id" VARCHAR(100) PRIMARY KEY,
+  "rut_conductor" VARCHAR(12) NOT NULL,
+  "fecha_vencimiento" DATE NOT NULL
+);
+
+CREATE TABLE "VEHICULO" (
+  "patente" VARCHAR(6) PRIMARY KEY,
+  "modelo" VARCHAR(6),
+  "fabricacion" INTEGER,
+  "rut_conductor" VARCHAR(12)
+);
+
+CREATE TABLE "PASE" (
+  "id_transaccion" VARCHAR(100) PRIMARY KEY,
+  "patente_vehiculo" VARCHAR(6) NOT NULL,
+  "id_peaje" INTEGER NOT NULL,
+  "fecha" DATE NOT NULL,
+  "hora" TIME NOT NULL,
+  "tarifa" INTEGER
+);
+
+ALTER TABLE "AUTOPISTA_CIUDAD" ADD FOREIGN KEY ("id_autopista") REFERENCES "AUTOPISTA" ("id");
+
+ALTER TABLE "AUTOPISTA_CIUDAD" ADD FOREIGN KEY ("id_ciudad") REFERENCES "CIUDAD" ("id");
+
+ALTER TABLE "PEAJE" ADD FOREIGN KEY ("id_autopista") REFERENCES "AUTOPISTA" ("id");
+
+ALTER TABLE "LICENCIA" ADD FOREIGN KEY ("rut_conductor") REFERENCES "CONDUCTOR" ("rut");
+
+ALTER TABLE "VEHICULO" ADD FOREIGN KEY ("rut_conductor") REFERENCES "CONDUCTOR" ("rut");
+
+ALTER TABLE "PASE" ADD FOREIGN KEY ("patente_vehiculo") REFERENCES "VEHICULO" ("patente");
+
+ALTER TABLE "PASE" ADD FOREIGN KEY ("id_peaje") REFERENCES "PEAJE" ("id");

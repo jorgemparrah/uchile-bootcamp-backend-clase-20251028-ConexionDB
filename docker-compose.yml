@@ -11,8 +11,25 @@ services:
     volumes:
       - ./db/respaldo_datos:/var/lib/mysql
 
+  postgres-server:
+    image: postgres:17.6-alpine3.22
+    ports:
+      - 5432:${POSTGRES_BD_PORT}
+    environment:
+      - POSTGRES_USER=${POSTGRES_BD_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_BD_PASS}
+      - POSTGRES_DB=${POSTGRES_BD_NAME}
+
   flyway:
     image: flyway/flyway:10.20.1-alpine
     volumes:
-      - ./db/sql:/flyway/sql
-    command: -url=jdbc:mysql://${BD_HOST}:${BD_PORT}/${BD_NAME}?allowPublicKeyRetrieval=true -user=${BD_USER} -password=${BD_PASS} -connectRetries=10 migrate
+      - ./db/sql-postgres:/flyway/sql
+    command: -url=jdbc:postgresql://${POSTGRES_BD_HOST}:${POSTGRES_BD_PORT}/${POSTGRES_BD_NAME}?allowPublicKeyRetrieval=true -user=${POSTGRES_BD_USER} -password=${POSTGRES_BD_PASS} -connectRetries=10 migrate
+
+  mongodb-server:
+    image: mongo:8.0.3-noble
+    ports:
+      - 27017:${MONGO_BD_PORT}
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_BD_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_BD_PASS}
