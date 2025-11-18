@@ -162,7 +162,7 @@ export class MongoService {
     return AutopistaMapper.documentToDtoGetList(autopistaDoc);
   }
 
-    async cargarDatosPeaje(ids: number[]): Promise<PeajeDto[]> {
+  async cargarDatosPeaje(ids: number[]): Promise<PeajeDto[]> {
     const listaEntities : PeajeEntity[] = await this.peajeRepository.findBy({
       id: In(ids)
     })
@@ -190,7 +190,7 @@ export class MongoService {
       id: {
         $in: ids
       }
-    }).populate("autopista")  ;
+    }).populate("autopista");
     console.log(peajeDoc)
     return PeajeMapper.documentToDtoGetList(peajeDoc);
   }
@@ -245,8 +245,6 @@ export class MongoService {
           autopistas: 1,
           promedioTarifas: 1
         }
-      },{
-        $unset: "autopistas.longitud"
       },{
         $sort: {
           promedioTarifas: -1,

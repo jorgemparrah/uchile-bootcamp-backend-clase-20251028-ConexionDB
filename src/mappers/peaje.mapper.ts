@@ -10,7 +10,9 @@ export class PeajeMapper {
     const dto = new PeajeDto();
     dto.id = document.id;
     dto.tarifa = document.tarifa;
-    dto.autopista = AutopistaMapper.schemaToDtoGet(document.autopista as Autopista);
+    if ((document.autopista as Autopista).nombre) {
+      dto.autopista = AutopistaMapper.schemaToDtoGet(document.autopista as Autopista);
+    }
     return dto;
   }
 
