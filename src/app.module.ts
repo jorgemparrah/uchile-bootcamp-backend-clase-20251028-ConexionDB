@@ -23,7 +23,7 @@ dotenv.config({ });
     }]),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
+      host: process.env.POSTGRES_BD_HOST,
       port: 5432,
       username: process.env.POSTGRES_BD_USER,
       password: process.env.POSTGRES_BD_PASS,
@@ -37,11 +37,11 @@ dotenv.config({ });
     /*
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
+      host: process.env.MYSQL_BD_HOST,
       port: 3306,
-      username: process.env.BD_USER,
-      password: process.env.BD_PASS,
-      database: process.env.BD_NAME,
+      username: process.env.MYSQL_BD_USER,
+      password: process.env.MYSQL_BD_PASS,
+      database: process.env.MYSQL_BD_NAME,
       entities: [
         Autopista,
         Ciudad,

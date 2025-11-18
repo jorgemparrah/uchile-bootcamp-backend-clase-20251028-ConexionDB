@@ -1,4 +1,32 @@
 services:
+
+  api:
+    image: node:22.20.0
+    ports:
+      - 3000:3000
+    environment:
+      - MYSQL_BD_ROOT_PASS=${BD_ROOT_PASS}
+      - MYSQL_BD_USER=${BD_USER}
+      - MYSQL_BD_PASS=${BD_PASS}
+      - MYSQL_BD_NAME=${BD_NAME}
+      - MYSQL_BD_HOST=${BD_HOST}
+      - MYSQL_BD_PORT=${BD_PORT}
+      - POSTGRES_BD_USER=${POSTGRES_BD_USER}
+      - POSTGRES_BD_PASS=${POSTGRES_BD_PASS}
+      - POSTGRES_BD_NAME=${POSTGRES_BD_NAME}
+      - POSTGRES_BD_HOST=${POSTGRES_BD_HOST}
+      - POSTGRES_BD_PORT=${POSTGRES_BD_PORT}
+      - MONGO_BD_PORT=${MONGO_BD_PORT}
+      - MONGO_BD_USER=${MONGO_BD_USER}
+      - MONGO_BD_PASS=${MONGO_BD_PASS}
+      - MONGO_BD_HOST=${MONGO_BD_HOST}
+      - MONGO_BD_NAME=${MONGO_BD_NAME}
+    command: [ "yarn", "start:dev" ]
+    working_dir: "/app"
+    user: "node"
+    volumes:
+      - .:/app
+
   mysql-server:
     image: mysql:8.4.6
     ports:
